@@ -118,13 +118,13 @@ function fillPopup(r, options){
 	if(r!==false)
 		jsFill(r, popup);
 
-	if(!options['already-existing']){
+	if(!options['already-existing'] && window.innerWidth>=768){
 		var input = popup.querySelector('input:not([type="hidden"])');
 		if(input){
 			input.focus();
 			input.select();
 		}else{
-			var textarea = popup.querySelector('input:not([type="hidden"])');
+			var textarea = popup.querySelector('textarea');
 			if(textarea){
 				textarea.focus();
 				textarea.select();
