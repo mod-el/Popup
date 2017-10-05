@@ -70,7 +70,7 @@ function zkPopup(content, options){
 		if(typeof content.get!='undefined') var get = content.get; else var get = '';
 		if(typeof content.post!='undefined') var post = content.post; else var post = '';
 
-		ajax(fillPopup, content.url, get, post, options);
+		ajax(content.url, get, post, options).then(fillPopup);
 	}else{
 		if(content.charAt(0)=='#' && (contentDiv = _(content.substr(1)))){
 			if(options['clone']){
