@@ -70,7 +70,9 @@ function zkPopup(content, options){
 		if(typeof content.get!='undefined') var get = content.get; else var get = '';
 		if(typeof content.post!='undefined') var post = content.post; else var post = '';
 
-		ajax(content.url, get, post, options).then(fillPopup);
+		ajax(content.url, get, post, options).then(function(r){
+			fillPopup(r, options);
+		});
 	}else{
 		if(content.charAt(0)=='#' && (contentDiv = _(content.substr(1)))){
 			if(options['clone']){
@@ -90,7 +92,7 @@ function zkPopup(content, options){
 		var popupObserver = new MutationObserver(function (mutations) {
 			fillPopup();
 		});
-		observer.observe(popup, {"childList": true, "subtree": true});
+		popupObserver.observe(popup, {"childList": true, "subtree": true});
 	}
 }
 
@@ -108,7 +110,7 @@ function fillPopup(r, options){
 
 	options['already-existing'] = false;
 
-	if(typeof r=='undefined' || r===null){
+	if(typeof r==='undefined' || r===null){
 		r = false;
 		options['already-existing'] = true;
 	}
