@@ -29,7 +29,7 @@ function zkPopup(content, options){
 
 		var cover = _('popup-cover');
 		var popup = _('popup-real');
-		loading(popup);
+		popup.loading();
 	}else{
 		options['already-existing'] = false;
 
@@ -43,7 +43,7 @@ function zkPopup(content, options){
 					zkPopupClose();
 				};
 			}
-			loading(cover);
+			cover.loading();
 			var wHeight = window.innerHeight || document.body.clientHeight;
 			cover.style.paddingTop = (wHeight/2-20)+'px';
 		}
@@ -114,7 +114,7 @@ function fillPopup(r, options){
 	if(cover)
 		cover.innerHTML = '';
 	if(r!==false)
-		jsFill(r, popup);
+		popup.jsFill(r);
 
 	if(!options['already-existing'] && window.innerWidth>=768){
 		var input = popup.querySelector('input:not([type="hidden"])');
