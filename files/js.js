@@ -23,17 +23,13 @@ function zkPopup(content, options){
 	var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
 	options = array_merge(defOptions, options);
 
-	if(typeof base_path!='undefined') var img_url = base_path+'img/loading.gif';
-	else if(typeof absolute_path!='undefined') var img_url = absolute_path+'img/loading.gif';
-	else var img_url = 'img/loading.gif';
-
 	zkPopupOnClose = options['onClose'];
 	if(_('popup-real') && _('popup-cover')){
 		options['already-existing'] = true;
 
 		var cover = _('popup-cover');
 		var popup = _('popup-real');
-		popup.innerHTML = '<img src="'+img_url+'" alt="" />';
+		loading(popup);
 	}else{
 		options['already-existing'] = false;
 
@@ -47,7 +43,7 @@ function zkPopup(content, options){
 					zkPopupClose();
 				};
 			}
-			cover.innerHTML = '<img src="'+img_url+'" alt="" />';
+			loading(cover);
 			var wHeight = window.innerHeight || document.body.clientHeight;
 			cover.style.paddingTop = (wHeight/2-20)+'px';
 		}
