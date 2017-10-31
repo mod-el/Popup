@@ -216,7 +216,8 @@ function fillPopup(r, options){
 
 	if(options['showClose']){
 		setTimeout(function(){
-			_('popup-real').style.overflowY = 'auto';
+			if(popup = _('popup-real'))
+				popup.style.overflowY = 'auto';
 			makeCloseButton();
 		}, 500);
 	}
