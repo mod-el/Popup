@@ -62,15 +62,16 @@ function zkPopup(content, options) {
 		popup.style.boxShadow = 'none';
 	popup.style.borderRadius = options['border-radius'];
 
-	if (typeof content == 'object') {
-		if (typeof content.get != 'undefined') var get = content.get; else var get = '';
-		if (typeof content.post != 'undefined') var post = content.post; else var post = '';
+	let promise;
+	if (typeof content === 'object') {
+		if (typeof content.get !== 'undefined') var get = content.get; else var get = '';
+		if (typeof content.post !== 'undefined') var post = content.post; else var post = '';
 
-		ajax(content.url, get, post, options).then(function (r) {
-			fillPopup(r, options);
+		promise = ajax(content.url, get, post, options).then(function (r) {
+			return fillPopup(r, options);
 		});
 	} else {
-		if (content.charAt(0) == '#' && (contentDiv = _(content.substr(1)))) {
+		if (content.charAt(0) === '#' && (contentDiv = _(content.substr(1)))) {
 			if (options['clone']) {
 				popup.innerHTML = contentDiv.innerHTML;
 			} else {
@@ -79,9 +80,9 @@ function zkPopup(content, options) {
 					popup.appendChild(contentDiv.firstChild);
 				}
 			}
-			fillPopup(false, options);
+			promise = fillPopup(false, options);
 		} else
-			fillPopup(content, options);
+			promise = fillPopup(content, options);
 	}
 
 	if (typeof MutationObserver !== 'undefined') {
@@ -90,138 +91,146 @@ function zkPopup(content, options) {
 		});
 		popupObserver.observe(popup, {"childList": true, "subtree": true});
 	}
+
+	return promise;
 }
 
 function fillPopup(r, options) {
-	var cover = _('popup-cover');
-	var popup = _('popup-real');
-	if (!popup)
-		return false;
-
-	if (typeof options == 'undefined')
-		options = {};
-
-	var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
-	options = array_merge(defOptions, options);
-
-	options['already-existing'] = false;
-
-	if (typeof r === 'undefined' || r === null) {
-		r = false;
-		options['already-existing'] = true;
-	}
-
-	if (cover)
-		cover.innerHTML = '';
-	if (r !== false)
-		popup.jsFill(r);
-
-	if (!options['already-existing'] && window.innerWidth >= 768) {
-		var input = popup.querySelector('input:not([type="hidden"])');
-		if (input) {
-			input.focus();
-			if (input.select)
-				input.select();
-		} else {
-			var textarea = popup.querySelector('textarea');
-			if (textarea) {
-				textarea.focus();
-				textarea.select();
-			}
+	return new Promise(resolve => {
+		var cover = _('popup-cover');
+		var popup = _('popup-real');
+		if (!popup){
+			resolve(false);
+			return;
 		}
-	}
 
-	if (options['onLoad'])
-		options['onLoad'].call(null);
+		if (typeof options === 'undefined')
+			options = {};
 
-	var wWidth = window.innerWidth || document.body.clientWidth;
-	var wHeight = window.innerHeight || document.body.clientHeight;
+		var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
+		options = array_merge(defOptions, options);
 
-	if (options['already-existing']) {
-		var oldWidth = popup.offsetWidth;
-		var oldHeight = popup.offsetHeight;
-	}
+		options['already-existing'] = false;
 
-	popup.className = 'zkPopup no-transition';
+		if (typeof r === 'undefined' || r === null) {
+			r = false;
+			options['already-existing'] = true;
+		}
 
-	if (options['width'] === false) {
-		popup.style.width = 'auto';
-		var width = popup.offsetWidth + 2; // Adding avoids subpixels-related issue
-	} else {
-		if (isNaN(options['width'])) {
-			var width = options['width'];
-			if (width.substr(-1) == '%')
-				width = parseFloat(width);
-			if (!isNaN(width)) {
-				width = wWidth / 100 * width;
+		if (cover)
+			cover.innerHTML = '';
+		if (r !== false)
+			popup.jsFill(r);
+
+		if (!options['already-existing'] && window.innerWidth >= 768) {
+			var input = popup.querySelector('input:not([type="hidden"])');
+			if (input) {
+				input.focus();
+				if (input.select)
+					input.select();
 			} else {
-				console.log('Popup error: invalid width.');
+				var textarea = popup.querySelector('textarea');
+				if (textarea) {
+					textarea.focus();
+					textarea.select();
+				}
 			}
-		} else {
-			var width = options['width'];
 		}
-	}
-	if (width > wWidth - options['safeMargin'])
-		width = wWidth - options['safeMargin'];
 
-	if (options['height'] === false) {
-		popup.style.height = 'auto';
-		var height = popup.offsetHeight + 2; // Adding avoids subpixels-related issue
-	} else {
-		if (isNaN(options['height'])) {
-			var height = options['height'];
-			if (height.substr(-1) == '%')
-				height = parseFloat(height);
-			if (!isNaN(height)) {
-				height = wHeight / 100 * height;
+		if (options['onLoad'])
+			options['onLoad'].call(null);
+
+		var wWidth = window.innerWidth || document.body.clientWidth;
+		var wHeight = window.innerHeight || document.body.clientHeight;
+
+		if (options['already-existing']) {
+			var oldWidth = popup.offsetWidth;
+			var oldHeight = popup.offsetHeight;
+		}
+
+		popup.className = 'zkPopup no-transition';
+
+		if (options['width'] === false) {
+			popup.style.width = 'auto';
+			var width = popup.offsetWidth + 2; // Adding avoids subpixels-related issue
+		} else {
+			if (isNaN(options['width'])) {
+				var width = options['width'];
+				if (width.substr(-1) == '%')
+					width = parseFloat(width);
+				if (!isNaN(width)) {
+					width = wWidth / 100 * width;
+				} else {
+					console.log('Popup error: invalid width.');
+				}
 			} else {
-				console.log('Popup error: invalid height.');
+				var width = options['width'];
 			}
-		} else {
-			var height = options['height'];
 		}
-	}
-	if (height > wHeight - options['safeMargin'])
-		height = wHeight - options['safeMargin'];
+		if (width > wWidth - options['safeMargin'])
+			width = wWidth - options['safeMargin'];
 
-	if (options['top'] === false) {
-		var top = Math.round((wHeight - height) / 2);
-	} else {
-		var top = options['top'];
-	}
+		if (options['height'] === false) {
+			popup.style.height = 'auto';
+			var height = popup.offsetHeight + 2; // Adding avoids subpixels-related issue
+		} else {
+			if (isNaN(options['height'])) {
+				var height = options['height'];
+				if (height.substr(-1) == '%')
+					height = parseFloat(height);
+				if (!isNaN(height)) {
+					height = wHeight / 100 * height;
+				} else {
+					console.log('Popup error: invalid height.');
+				}
+			} else {
+				var height = options['height'];
+			}
+		}
+		if (height > wHeight - options['safeMargin'])
+			height = wHeight - options['safeMargin'];
 
-	if (options['left'] === false) {
-		var left = Math.round((wWidth - width) / 2);
-	} else {
-		var left = options['left'];
-	}
+		if (options['top'] === false) {
+			var top = Math.round((wHeight - height) / 2);
+		} else {
+			var top = options['top'];
+		}
 
-	if (options['already-existing']) {
-		popup.style.width = oldWidth + 'px';
-		popup.style.height = oldHeight + 'px';
-	} else {
-		popup.style.transform = 'scale(0)';
-	}
-	popup.offsetWidth; // Reflow
-	popup.className = 'zkPopup';
+		if (options['left'] === false) {
+			var left = Math.round((wWidth - width) / 2);
+		} else {
+			var left = options['left'];
+		}
 
-	popup.style.width = width + 'px';
-	popup.style.height = height + 'px';
-	popup.style.top = top + 'px';
-	popup.style.left = left + 'px';
+		if (options['already-existing']) {
+			popup.style.width = oldWidth + 'px';
+			popup.style.height = oldHeight + 'px';
+		} else {
+			popup.style.transform = 'scale(0)';
+		}
+		popup.offsetWidth; // Reflow
+		popup.className = 'zkPopup';
 
-	if (!options['already-existing']) {
-		popup.style.transform = 'scale(1)';
-		popup.style.opacity = 1;
-	}
+		popup.style.width = width + 'px';
+		popup.style.height = height + 'px';
+		popup.style.top = top + 'px';
+		popup.style.left = left + 'px';
 
-	if (options['showClose']) {
-		setTimeout(function () {
-			if (popup = _('popup-real'))
-				popup.style.overflowY = 'auto';
-			makeCloseButton();
-		}, 500);
-	}
+		if (!options['already-existing']) {
+			popup.style.transform = 'scale(1)';
+			popup.style.opacity = 1;
+		}
+
+		if (options['showClose']) {
+			setTimeout(function () {
+				if (popup = _('popup-real'))
+					popup.style.overflowY = 'auto';
+				makeCloseButton();
+			}, 500);
+		}
+
+		resolve(true);
+	});
 }
 
 function zkPopupClose(skipOnClose) {
@@ -261,13 +270,6 @@ window.addEventListener('keydown', function (event) {
 			break;
 	}
 });
-
-function myPopup(content, options) {
-	return zkPopup(content, options);
-} // Retrocompatibilità
-function myPopupClose() {
-	return zkPopupClose();
-} // Retrocompatibilità
 
 function makeCloseButton() {
 	var popup = _('popup-real');
