@@ -81,8 +81,9 @@ function zkPopup(content, options) {
 				}
 			}
 			promise = fillPopup(false, options);
-		} else
+		} else {
 			promise = fillPopup(content, options);
+		}
 	}
 
 	if (typeof MutationObserver !== 'undefined') {
@@ -92,14 +93,14 @@ function zkPopup(content, options) {
 		popupObserver.observe(popup, {"childList": true, "subtree": true});
 	}
 
-	return promise;
+	return promise.then(changedHtml);
 }
 
 function fillPopup(r, options) {
 	return new Promise(resolve => {
 		var cover = _('popup-cover');
 		var popup = _('popup-real');
-		if (!popup){
+		if (!popup) {
 			resolve(false);
 			return;
 		}
