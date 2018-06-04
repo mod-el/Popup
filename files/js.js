@@ -13,7 +13,8 @@ var zkPopupDefaultOptions = {
 	'onClose': false,
 	'closeOnCoverClick': true,
 	'onLoad': false,
-	'clone': false
+	'clone': false,
+	'observe-content': true
 };
 
 function zkPopup(content, options) {
@@ -86,7 +87,7 @@ function zkPopup(content, options) {
 		}
 	}
 
-	if (typeof MutationObserver !== 'undefined') {
+	if (options['observe-content'] && typeof MutationObserver !== 'undefined') {
 		var popupObserver = new MutationObserver(function (mutations) {
 			fillPopup();
 		});
