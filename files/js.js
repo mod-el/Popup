@@ -16,6 +16,7 @@ var zkPopupDefaultOptions = {
 	'clone': false,
 	'observe-content': true
 };
+var zkPopupCurrentOptions = {};
 
 function zkPopup(content, options) {
 	if (typeof options === 'undefined')
@@ -63,12 +64,14 @@ function zkPopup(content, options) {
 		popup.style.boxShadow = 'none';
 	popup.style.borderRadius = options['border-radius'];
 
+	zkPopupCurrentOptions = options;
+
 	let promise;
 	if (typeof content === 'object') {
 		if (typeof content.get !== 'undefined') var get = content.get; else var get = '';
 		if (typeof content.post !== 'undefined') var post = content.post; else var post = '';
 
-		promise = ajax(content.url, get, post, options).then(function (r) {
+		promise = ajax(content.url, get, post).then(function (r) {
 			return fillPopup(r, options);
 		});
 	} else {
@@ -110,7 +113,8 @@ function fillPopup(r, options) {
 			options = {};
 
 		var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
-		options = array_merge(defOptions, options);
+		var tempOptions = array_merge(defOptions, zkPopupCurrentOptions);
+		options = array_merge(tempOptions, options);
 
 		options['already-existing'] = false;
 
@@ -231,7 +235,7 @@ function fillPopup(r, options) {
 			}, 500);
 		}
 
-		resolve(true);
+		setTimeout(resolve, 400);
 	});
 }
 
@@ -259,6 +263,8 @@ function zkPopupClose(skipOnClose) {
 	if (_('zkPopupClose'))
 		document.body.removeChild(_('zkPopupClose'));
 	document.body.removeChild(popup);
+
+	zkPopupCurrentOptions = {};
 }
 
 window.addEventListener('keydown', function (event) {
