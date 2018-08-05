@@ -101,7 +101,7 @@ function zkPopup(content, options) {
 }
 
 function fillPopup(r, options) {
-	return new Promise(resolve => {
+	return new Promise(function (resolve) {
 		var cover = _('popup-cover');
 		var popup = _('popup-real');
 		if (!popup) {
