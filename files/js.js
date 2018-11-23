@@ -143,7 +143,7 @@ function fillPopup(r, options) {
 			}
 		}
 
-		if (options['onLoad'])
+		if (options['onLoad'] && !options['already-existing'])
 			options['onLoad'].call(null);
 
 		var wWidth = window.innerWidth || document.body.clientWidth;
