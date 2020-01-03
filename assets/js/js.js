@@ -289,7 +289,7 @@ function makeCloseButton() {
 		close = document.createElement('div');
 		close.id = 'zkPopupClose';
 		close.className = 'zkPopupClose';
-		close.innerHTML = '<a href="#" onclick="zkPopupClose(); return false"><img src="' + base_path + 'model/Popup/files/close.png" alt="" /></a>';
+		close.innerHTML = '<a href="#" onclick="zkPopupClose(); return false"><img src="' + PATHBASE + 'model/Popup/assets/img/close.png" alt="" /></a>';
 		document.body.appendChild(close);
 	}
 
