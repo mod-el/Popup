@@ -158,12 +158,15 @@ function fillPopup(r, options) {
 
 		popup.className = 'zkPopup no-transition';
 
+		let width, height, top, left;
+
 		if (options['width'] === false) {
 			popup.style.width = 'auto';
-			var width = popup.offsetWidth + 2; // Adding avoids subpixels-related issue
+			width = popup.offsetWidth + 2; // Adding avoids subpixels-related issue
 		} else {
+			width = options['width'];
+
 			if (isNaN(options['width'])) {
-				var width = options['width'];
 				if (width.substr(-1) == '%')
 					width = parseFloat(width);
 				if (!isNaN(width)) {
@@ -172,18 +175,30 @@ function fillPopup(r, options) {
 					console.log('Popup error: invalid width.');
 				}
 			} else {
-				var width = options['width'];
+				width = options['width'];
 			}
 		}
-		if (width > wWidth - options['safeMargin'])
+
+		let correctedWidth = false;
+		if (width > wWidth - options['safeMargin']) {
 			width = wWidth - options['safeMargin'];
+			correctedWidth = true;
+		}
+
+		if (options['left'] === false)
+			left = Math.round((wWidth - width) / 2);
+		else
+			left = options['left'];
+
+		if (!correctedWidth && options['width'] === false)
+			width = 'auto';
 
 		if (options['height'] === false) {
 			popup.style.height = 'auto';
-			var height = popup.offsetHeight + 2; // Adding avoids subpixels-related issue
+			height = popup.offsetHeight + 2; // Adding avoids subpixels-related issue
 		} else {
 			if (isNaN(options['height'])) {
-				var height = options['height'];
+				height = options['height'];
 				if (height.substr(-1) == '%')
 					height = parseFloat(height);
 				if (!isNaN(height)) {
@@ -192,35 +207,37 @@ function fillPopup(r, options) {
 					console.log('Popup error: invalid height.');
 				}
 			} else {
-				var height = options['height'];
+				height = options['height'];
 			}
 		}
-		if (height > wHeight - options['safeMargin'])
+
+		let correctedHeight = false;
+		if (height > wHeight - options['safeMargin']) {
 			height = wHeight - options['safeMargin'];
-
-		if (options['top'] === false) {
-			var top = Math.round((wHeight - height) / 2);
-		} else {
-			var top = options['top'];
+			correctedHeight = true;
 		}
 
-		if (options['left'] === false) {
-			var left = Math.round((wWidth - width) / 2);
-		} else {
-			var left = options['left'];
-		}
+		if (options['top'] === false)
+			top = Math.round((wHeight - height) / 2);
+		else
+			top = options['top'];
+
+		if (!correctedHeight && options['height'] === false)
+			height = 'auto';
 
 		if (options['already-existing']) {
-			popup.style.width = oldWidth + 'px';
-			popup.style.height = oldHeight + 'px';
+			if (width !== 'auto')
+				popup.style.width = oldWidth + 'px';
+			if (height !== 'auto')
+				popup.style.height = oldHeight + 'px';
 		} else {
 			popup.style.transform = 'scale(0)';
 		}
 		popup.offsetWidth; // Reflow
 		popup.className = 'zkPopup';
 
-		popup.style.width = width + 'px';
-		popup.style.height = height + 'px';
+		popup.style.width = width === 'auto' ? width : width + 'px';
+		popup.style.height = height === 'auto' ? height : height + 'px';
 		popup.style.top = top + 'px';
 		popup.style.left = left + 'px';
 
