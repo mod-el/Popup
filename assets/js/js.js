@@ -7,6 +7,7 @@ var zkPopupDefaultOptions = {
 	'height': false,
 	'background': '#FFF',
 	'border-radius': '4px',
+	'padding': '15px',
 	'showCover': true,
 	'showClose': true,
 	'safeMargin': 40,
@@ -63,6 +64,7 @@ function zkPopup(content, options) {
 	if (!options['background'])
 		popup.style.boxShadow = 'none';
 	popup.style.borderRadius = options['border-radius'];
+	popup.style.padding = options['padding'];
 
 	zkPopupCurrentOptions = options;
 
