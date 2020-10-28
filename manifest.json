@@ -1,9 +1,11 @@
 {
 	"name": "Popup",
 	"description": "A simple JavaScript popup",
-	"version": "1.3.0",
+	"version": "1.3.1",
 	"dependencies": {
 		"FrontEnd": ">=1.2.3"
 	},
-	"assets-position": "foot"
+	"assets-position": "foot",
+	"defer-js": true,
+	"defer-css": true
 }
