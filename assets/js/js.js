@@ -23,21 +23,23 @@ function zkPopup(content, options) {
 	if (typeof options === 'undefined')
 		options = {};
 
-	var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
+	let defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
 	options = array_merge(defOptions, options);
+
+	let popup, cover;
 
 	zkPopupOnClose = options['onClose'];
 	if (_('popup-real') && _('popup-cover')) {
 		options['already-existing'] = true;
 
-		var cover = _('popup-cover');
-		var popup = _('popup-real');
+		cover = _('popup-cover');
+		popup = _('popup-real');
 		popup.loading();
 	} else {
 		options['already-existing'] = false;
 
 		if (options['showCover']) {
-			var cover = document.createElement('div');
+			cover = document.createElement('div');
 			cover.className = 'zkPopupBg';
 			cover.id = 'popup-cover';
 			cover = document.body.appendChild(cover);
@@ -47,11 +49,11 @@ function zkPopup(content, options) {
 				};
 			}
 			cover.loading();
-			var wHeight = window.innerHeight || document.body.clientHeight;
+			let wHeight = window.innerHeight || document.body.clientHeight;
 			cover.style.paddingTop = (wHeight / 2 - 20) + 'px';
 		}
 
-		var popup = document.createElement('div');
+		popup = document.createElement('div');
 		popup.className = 'zkPopup no-transition';
 		popup.id = 'popup-real';
 		popup.style.opacity = 0;
@@ -70,12 +72,13 @@ function zkPopup(content, options) {
 
 	let promise;
 	if (typeof content === 'object') {
-		if (typeof content.get !== 'undefined') var get = content.get; else var get = '';
-		if (typeof content.post !== 'undefined') var post = content.post; else var post = '';
+		let get = {}, post = {};
+		if (typeof content.get !== 'undefined')
+			get = content.get;
+		if (typeof content.post !== 'undefined')
+			post = content.post;
 
-		promise = ajax(content.url, get, post).then(function (r) {
-			return fillPopup(r, options);
-		});
+		promise = ajax(content.url, get, post).then(r => fillPopup(r, options));
 	} else {
 		if (content.charAt(0) === '#' && (contentDiv = _(content.substr(1)))) {
 			if (options['clone']) {
@@ -92,20 +95,16 @@ function zkPopup(content, options) {
 		}
 	}
 
-	if (options['observe-content'] && typeof MutationObserver !== 'undefined') {
-		var popupObserver = new MutationObserver(function (mutations) {
-			fillPopup();
-		});
-		popupObserver.observe(popup, {"childList": true, "subtree": true});
-	}
+	if (options['observe-content'] && typeof MutationObserver !== 'undefined')
+		(new MutationObserver(() => fillPopup())).observe(popup, {"childList": true, "subtree": true});
 
 	return promise.then(changedHtml);
 }
 
 function fillPopup(r, options) {
 	return new Promise(function (resolve) {
-		var cover = _('popup-cover');
-		var popup = _('popup-real');
+		let cover = _('popup-cover');
+		let popup = _('popup-real');
 		if (!popup) {
 			resolve(false);
 			return;
@@ -114,8 +113,8 @@ function fillPopup(r, options) {
 		if (typeof options === 'undefined')
 			options = {};
 
-		var defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
-		var tempOptions = array_merge(defOptions, zkPopupCurrentOptions);
+		let defOptions = JSON.parse(JSON.stringify(zkPopupDefaultOptions));
+		let tempOptions = array_merge(defOptions, zkPopupCurrentOptions);
 		options = array_merge(tempOptions, options);
 
 		options['already-existing'] = false;
@@ -131,7 +130,7 @@ function fillPopup(r, options) {
 			popup.jsFill(r);
 
 		if (!options['already-existing'] && window.innerWidth >= 768) {
-			var input = popup.querySelector('input:not([type="hidden"])');
+			let input = popup.querySelector('input:not([type="hidden"])');
 			if (input) {
 				input.focus();
 				if (input.select)
@@ -148,8 +147,8 @@ function fillPopup(r, options) {
 		if (options['onLoad'] && !options['already-existing'])
 			options['onLoad'].call(null);
 
-		var wWidth = window.innerWidth || document.body.clientWidth;
-		var wHeight = window.innerHeight || document.body.clientHeight;
+		let wWidth = window.innerWidth || document.body.clientWidth;
+		let wHeight = window.innerHeight || document.body.clientHeight;
 
 		if (options['already-existing']) {
 			var oldWidth = popup.offsetWidth;
@@ -179,9 +178,13 @@ function fillPopup(r, options) {
 			}
 		}
 
+		let widthToSubtract = options['safeMargin'];
+		if (options['left'])
+			widthToSubtract = options['safeMargin'] / 2 + options['left'];
+
 		let correctedWidth = false;
-		if (width > wWidth - options['safeMargin']) {
-			width = wWidth - options['safeMargin'];
+		if (width > wWidth - widthToSubtract) {
+			width = wWidth - widthToSubtract;
 			correctedWidth = true;
 		}
 
@@ -211,9 +214,13 @@ function fillPopup(r, options) {
 			}
 		}
 
+		let heightToSubtract = options['safeMargin'];
+		if (options['top'])
+			heightToSubtract = options['safeMargin'] / 2 + options['top'];
+
 		let correctedHeight = false;
-		if (height > wHeight - options['safeMargin']) {
-			height = wHeight - options['safeMargin'];
+		if (height > wHeight - heightToSubtract) {
+			height = wHeight - heightToSubtract;
 			correctedHeight = true;
 		}
 
