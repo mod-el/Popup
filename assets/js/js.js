@@ -150,12 +150,17 @@ function fillPopup(r, options) {
 		let wWidth = window.innerWidth || document.body.clientWidth;
 		let wHeight = window.innerHeight || document.body.clientHeight;
 
-		if (options['already-existing']) {
-			var oldWidth = popup.offsetWidth;
-			var oldHeight = popup.offsetHeight;
-		}
-
 		popup.className = 'zkPopup no-transition';
+
+		let oldTop, oldLeft, oldWidth, oldHeight;
+		if (options['already-existing']) {
+			oldTop = popup.style.top;
+			oldLeft = popup.style.left;
+			oldWidth = popup.offsetWidth;
+			oldHeight = popup.offsetHeight;
+			popup.style.top = '0px';
+			popup.style.left = '0px';
+		}
 
 		let width, height, top, left;
 
@@ -166,13 +171,13 @@ function fillPopup(r, options) {
 			width = options['width'];
 
 			if (isNaN(options['width'])) {
-				if (width.substr(-1) == '%')
+				if (width.substr(-1) === '%')
 					width = parseFloat(width);
-				if (!isNaN(width)) {
+
+				if (!isNaN(width))
 					width = wWidth / 100 * width;
-				} else {
-					console.log('Popup error: invalid width.');
-				}
+				else
+					console.error('Popup error: invalid width.');
 			} else {
 				width = options['width'];
 			}
@@ -202,13 +207,13 @@ function fillPopup(r, options) {
 		} else {
 			if (isNaN(options['height'])) {
 				height = options['height'];
-				if (height.substr(-1) == '%')
+				if (height.substr(-1) === '%')
 					height = parseFloat(height);
-				if (!isNaN(height)) {
+
+				if (!isNaN(height))
 					height = wHeight / 100 * height;
-				} else {
-					console.log('Popup error: invalid height.');
-				}
+				else
+					console.error('Popup error: invalid height.');
 			} else {
 				height = options['height'];
 			}
@@ -240,6 +245,11 @@ function fillPopup(r, options) {
 		} else {
 			popup.style.transform = 'scale(0)';
 		}
+
+		if (oldTop)
+			popup.style.top = oldTop;
+		if (oldLeft)
+			popup.style.left = oldLeft;
 		popup.offsetWidth; // Reflow
 		popup.className = 'zkPopup';
 

@@ -21,19 +21,10 @@ Popup Style
 	box-shadow: 1px 1px 5px #444;
 	overflow: hidden;
 	box-sizing: border-box;
-
-	-webkit-transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease-out, -webkit-transform 0.4s ease-in;
-	-moz-transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease-out, -moz-transform 0.4s ease-in;
-	-o-transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease-out, -o-transform 0.4s ease-in;
-	-ms-transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease-out, -ms-transform 0.4s ease-in;
 	transition: width 0.4s ease-out, height 0.4s ease-out, top 0.4s ease-out, left 0.4s ease-out, opacity 0.4s ease-out, transform 0.4s ease-in;
 }
 
 .zkPopup.no-transition{
-	-webkit-transition: none;
-	-moz-transition: none;
-	-o-transition: none;
-	-ms-transition: none;
 	transition: none;
 }
 
